@@ -1,0 +1,43 @@
+version: '3'
+services:
+  db:
+    image: postgres
+    container_name: cloud-learning-postgresdb
+    restart: always
+    environment:
+      POSTGRES_DB: shantanutyagi
+      POSTGRES_USER: admin  # Replace with your desired username
+      POSTGRES_PASSWORD: admin  # Replace with your desired password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $POSTGRES_USER"]
+      interval: 1s
+      timeout: 5s
+      retries: 10
+      
+version: '3'
+services:
+  db:
+    ports:
+       - 5432:5432
+    image: postgres
+    container_name: cloud-learning-postgres-container
+    environment:
+      POSTGRES_DB: mydb
+      POSTGRES_USER: admin  # Replace with your desired username
+      POSTGRES_PASSWORD: admin  # Replace with your desired password
+    volumes:
+       - /Users/shantanutyagi/postgres_data/custom/mount:/var/lib/postgresql/data
+    restart: always
+
+  app:
+    build: .
+    container_name: cloud-learning-app-container
+    ports:
+       - 8080:8080
+    environment:
+      db-url: jdbc:postgresql://db:5432/mydb
+      db-username: admin
+      db-password: admin
+    depends_on:
+       - db
+    restart: alwayss

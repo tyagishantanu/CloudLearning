@@ -1,0 +1,35 @@
+version: '3'
+services:
+  db:
+    ports:
+      - 5434:5434
+    networks:
+      - network
+    image: postgres
+    container_name: cloud-learning-postgres-container
+    environment:
+      POSTGRES_DB: shantanutyagi
+      POSTGRES_USER: admin  # Replace with your desired username
+      POSTGRES_PASSWORD: admin  # Replace with your desired password
+    volumes:
+      - volume:/var/lib/postgresql/data
+    restart: always
+
+  app:
+    build: .
+    container_name: cloud-learning-app-container
+    ports:
+      - 8081:8081
+    networks:
+      - network
+    environment:
+      - POSTGRES_HOST=cloud-learning-postgres-container
+    depends_on:
+      - db
+    restart: on-failure
+      
+networks:
+  network:
+
+volumes:
+  volume:
